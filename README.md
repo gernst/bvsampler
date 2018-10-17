@@ -8,6 +8,8 @@ that works on bitvector constraints instead of propositional SAT problems.
 All credit for the idea goes to Rafael Dutra, Kevin Laeufer, Jonathan Bachrach and Koushik Sen, UC Berkeley.
 Check out their [ICSE'2018 paper](https://people.eecs.berkeley.edu/~rtd/papers/quicksampler.pdf) on the approach.
 
+**WARNING**: The generated samples are currently not checked for whether they satisfy the given constraints!
+
 ## Requirements
 
 - Python 2.7
