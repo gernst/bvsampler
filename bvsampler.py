@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import random
 import z3
 
@@ -20,27 +18,31 @@ def bvcount(b):
 
 MAX_LEVEL = 6
 
-def BVSampler(constraints, target):
+def bvsampler(constraints, target):
+    n = target.size()
+
     solver = z3.Optimize()
     solver.add(constraints)
-
-    n = target.size()
+    delta  = z3.BitVec('delta',  n)
+    result = z3.BitVec('result', n)
+    solver.add(result == target)
+    solver.minimize(bvcount(delta))
 
     results = set()
 
     while True:
-        guess  = z3.BitVecVal(random.getrandbits(n), n)
-        result = z3.BitVec('result', n)
-        delta  = z3.BitVec('delta',  n)
-        solver.add(result == target)
+        # print('---------------------------')
+        guess = z3.BitVecVal(random.getrandbits(n), n)
+
+        solver.push()
         solver.add(result ^ delta == guess)
-        solver.minimize(bvcount(delta))
 
         if solver.check() != z3.sat:
             break
 
         model   = solver.model()
         result0 = model[result].as_long()
+        solver.pop()
 
         results.add(result0)
         yield result0
@@ -56,6 +58,8 @@ def BVSampler(constraints, target):
         for i in range(n):
             # print('mutating bit ' + str(i))
             solver.push()
+            goal = z3.BitVecVal(result0, n)
+            solver.add(result ^ delta == goal)
             solver.add(z3.Extract(i, i, delta) == 0x1)
 
             if solver.check() == z3.sat:
