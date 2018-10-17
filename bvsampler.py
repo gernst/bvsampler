@@ -18,6 +18,10 @@ def bvcount(b):
 
 MAX_LEVEL = 6
 
+def cast_long_to_str(x, n):
+    # see angr/state_plugins/solver.py _cast_to
+    return '{:x}'.format(x).zfill(n/4).decode('hex')
+
 def bvsampler(constraints, target):
     n = target.size()
 
